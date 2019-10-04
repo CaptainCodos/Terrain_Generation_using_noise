@@ -25,37 +25,23 @@
 #include "Rasterizer/Rasterizer.h"
 #include "Raytracer/Raytracer.h"
 
-#include "SimplexNoise.h"
 #include "PerlinNoise.h"
 
 
 int main(int argc, char *argv[])
 {
 	srand(time(NULL));
-	/*
-		CREATE APP CONTAINER
-	*/
 	GLFWApplication app = GLFWApplication::GLFWApplication("GLFW engine test", 800, 600);
 	app.init();
 
-
-	/*
-		CREATE SCENE
-	*/
-	//PolyMesh mesh = PolyMesh::PolyMesh(vertices, 6, 3); // create model from list of vertices and associated UVs
 	PolyMesh mesh = PolyMesh::PolyMesh(100.0f, 100.0f, 9, PolyMesh::DesertMountain);
 	// material
 	Phong phong = Phong::Phong(glm::vec3(.2f,.2f,.2f), glm::vec3(1.0f, .2f, .2f), glm::vec3(.7f, .7f, .7f), 12);
 	// Model
 	Model quad = Model::Model(&mesh, phong);
-
-	// load texture
-	Texture2D texture;
-	texture.loadTexture(".//resources//textures//marbl01.jpg", true);
 		
 	// compute view matrix using glm::lookat
 	glm::mat4  view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	//app.setView(GLFWApplication::cam.GetViewMatrix());
 
 	// projection matrix
 	glm::mat4 projection = glm::perspective(45.0f, 1.0f * app.getWidth() / app.getHeight(), 0.001f, 200.0f);
@@ -63,12 +49,7 @@ int main(int argc, char *argv[])
 
 	Scene scene = Scene::Scene();
 
-	/*
-	CREATE RENDERER
-	*/
 	Rasterizer renderer = Rasterizer();
-	
-	//Raytracer renderer = Raytracer::Raytracer();
 
 	GLfloat firstFrame = (GLfloat)glfwGetTime();
 	GLfloat lastFrame = firstFrame;
@@ -91,7 +72,6 @@ int main(int argc, char *argv[])
 		app.HandleKeyPresses(dt);
 		app.setView(GLFWApplication::cam.GetViewMatrix());
 
-
 		// Regenerate terrain
 		if (GLFWApplication::m_keys[GLFW_KEY_1] && !GLFWApplication::m_oldKeys[GLFW_KEY_1])
 		{
@@ -111,16 +91,12 @@ int main(int argc, char *argv[])
 		{
 			renderer.lighting = !renderer.lighting;
 		}
-		/*
-		**	RENDER
-		*/
-		
+
 		// clear buffer
 		app.clear();
 
 		// draw geometry to buffer
-		renderer.draw(quad, app); // works for rasterizer
-		//renderer.draw(scene); // works for raytracer
+		renderer.draw(quad, app);
 
 		// display image buffer
 		app.display();

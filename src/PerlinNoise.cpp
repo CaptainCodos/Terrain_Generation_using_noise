@@ -25,6 +25,7 @@ void PerlinNoise::Init(int octaves, float persist)
 		m_gridVals.push_back(vector<vector<float>>(maxS, vector<float>(maxS)));
 	}
 
+	// Create random values for each octave
 	for (int i = 0; i < octaves; i++)
 	{
 		int maxS = (std::pow(2, i) * 8);
@@ -46,11 +47,12 @@ float PerlinNoise::SampleNoise(float x, float y, float mult, float bias, int dir
 	float amplitude = 1.0f;
 	float freq = 1.0f * 8;
 
+	// Get values for each octive and combine them. 
 	for (int i = 0; i < m_octaves; i++)
 	{
 		int maxS = (std::pow(2, i) * 8);
 
-		float val = SampleOctave((x * freq), (y * freq), i, freq, maxS, bias, dir) * amplitude;
+		float val = SampleOctave((x * freq), (y * freq), i, maxS, bias, dir) * amplitude;
 
 		totalVal += val;
 
@@ -60,12 +62,13 @@ float PerlinNoise::SampleNoise(float x, float y, float mult, float bias, int dir
 		freq *= 2.0f;
 	}
 
+	// Normalise the sampled value
 	float finalVal = totalVal / max;
 
 	return pow(finalVal, contrast) * mult;
 }
 
-float PerlinNoise::SampleOctave(float x, float y, int oct, float frequency, int max, float bias, int dir)
+float PerlinNoise::SampleOctave(float x, float y, int oct, int max, float contrast, int dir)
 {
 	int x0, x1;
 	int y0, y1;
@@ -75,6 +78,7 @@ float PerlinNoise::SampleOctave(float x, float y, int oct, float frequency, int 
 	float fX = x - (float)(Ix);
 	float fY = y - (float)(Iy);
 
+	// Get corners for (x,y) for interpolation
 	x0 = (Ix) % (max);
 	x1 = (Ix + 1) % (max);
 
@@ -95,13 +99,15 @@ float PerlinNoise::SampleOctave(float x, float y, int oct, float frequency, int 
 	float abcd = Lerp(ab, cd, fY);
 	abcd = Smooth(abcd);
 
+	// Apply contrast
 	if (dir == 1)
 	{
-		abcd = pow(abcd, bias);
+		abcd = pow(abcd, contrast);
 	}
 	else if (dir == -1)
 	{
-		abcd = pow(abcd, 1.0f / bias);
+		if (contrast != 0.0f)
+			abcd = pow(abcd, 1.0f / contrast);
 	}
 
 	return abcd;

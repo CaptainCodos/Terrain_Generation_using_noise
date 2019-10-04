@@ -48,17 +48,12 @@ public:
 	// method = 4: v and colour and uv 
 	PolyMesh(GLfloat* vertices, GLuint vertexNum, GLbyte method);
 
-	// create mesh from primitive type (triangle, quad, cube)
-	PolyMesh(PrimitiveType type);
-
 	// create large scale quad mesh
 	PolyMesh(float width, float height, int power, TerrainType t);
 
 	// create geometry buffers
 	void initMesh(glm::vec3* vertices, glm::vec2* UVs, glm::vec3* normals, glm::vec4* colors);
-
 	void initMesh(GLfloat* vertices, glm::vec2* UVs, glm::vec3* normals);
-
 
 	// accessors
 	GLuint getVBO() const { return m_vbo; }
@@ -67,16 +62,10 @@ public:
 	GLuint getVertexNum() const { return m_vertexNum; }
 	CreationMode getCreationMode() const { return m_creationMode; }
 
-	// utility
-	// create vector of unique vertices
-	void createUniqueVertices();
-
 	// other methods
 	void deleteMesh();
 	void bindGeometry() override;
 	void draw(const Application &app) override;
-
-
 private:
 	// generic variables
 	CreationMode m_creationMode;
@@ -94,5 +83,4 @@ private:
 	GLuint m_cbo; // color buffer object
 
 	GLuint m_shaderProgram; // shader program used to draw Mesh
-
 };
